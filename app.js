@@ -4,6 +4,7 @@ const app = express();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 //importing routes
 const authRouter = require('./routes/auth');
@@ -28,7 +29,8 @@ let validateRequest = (req, res, next) => {
       let data = jwt.verify(authHeader.split(' ')[1], process.env.ACCESS_TOKEN_SECRET);
       console.log("jwt verification result: ", data);
       next();
-  }catch(err){
+  } catch (err) {
+    console.log(err);
       res.status(403).send("Invalid token provided");
   }
 }

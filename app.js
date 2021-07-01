@@ -7,13 +7,34 @@ const cors = require('cors');
 
 //importing routes
 const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
 
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
+let validateRequest = (req, res, next) => {
+  let authHeader = req.headers['authorization'];
+  console.log(authHeader);
+  if(!req.headers['authorization']){
+      res.status(403).send('No Authorization provided');
+      return;
+  }
+  if(req.headers['authorization'].length < 8){
+      res.status(403).send('Token not provided');
+      return;
+  }
+  try{
+      let data = jwt.verify(authHeader.split(' ')[1], process.env.ACCESS_TOKEN_SECRET);
+      console.log("jwt verification result: ", data);
+      next();
+  }catch(err){
+      res.status(403).send("Invalid token provided");
+  }
+}
+
 app.use('/auth', authRouter);
-// app.use("/posts", postRouter);
+app.use("/user", userRouter);
 
 mongoose
   .connect(process.env.MONGODB_URL, {

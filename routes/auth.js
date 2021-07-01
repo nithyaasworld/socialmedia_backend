@@ -36,7 +36,7 @@ router.post("/token", async (req, res) => {
    
     if (!token) {
         res.send(403);
-    } else if ( !refreshTokens.includes(token)) {
+    } else if (checkifRefreshTokenPresent()) {
         res.send(403);
     } else {
       try {
@@ -50,6 +50,11 @@ router.post("/token", async (req, res) => {
         console.log(e);
         res.status(401).send(e);
       }
+    }
+
+    async function checkifRefreshTokenPresent() {
+        let answer = await userController.checkRefreshToken(req.body);
+        return answer.status;
     }
   });
   

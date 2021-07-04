@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 //Auth related functions
 const addUser = async ({ username, name, email, password }) => {
   let hash = await bcrypt.hash(password, 10);
-
   let user = new UserModel({ username, name, email, password: hash });
   let result = {};
   await user
